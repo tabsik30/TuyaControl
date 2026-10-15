@@ -3,7 +3,7 @@
   "manifestVersion": 1,
   "id": "com.tabsik12.tuya-control",
   "name": "Tuya Control",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Controls Tuya smart home devices locally over LAN (protocol 3.3/3.4/3.5), with optional cloud fallback and cloud device sync.",
   "icon": "Assets/icon.svg",
   "entrypoints": {
