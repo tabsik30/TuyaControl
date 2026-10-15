@@ -3,6 +3,16 @@ name: Release
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release tag to upload, for example v1.0.6
+        required: true
+        type: string
+      changelog:
+        description: Release notes to include with the build
+        required: false
+        type: string
 
 jobs:
   publish:
@@ -11,7 +21,7 @@ jobs:
       contents: read
       id-token: write
     with:
-      version: ${{ github.event.release.tag_name }}
+      version: ${{ github.event.release.tag_name || inputs.version }}
       source: src/TuyaControl
       cli-version: 3.0.0-beta.17
-      changelog: ${{ github.event.release.body }}
+      changelog: ${{ github.event.release.body || inputs.changelog }}
