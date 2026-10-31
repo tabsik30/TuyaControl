@@ -24,7 +24,9 @@ public sealed class TuyaDiscoveredDevice
 /// </summary>
 public static class TuyaDiscovery
 {
+#pragma warning disable CA5351 // The Tuya beacon protocol requires MD5 for decryption.
     private static readonly byte[] UdpKey = MD5.HashData(Encoding.UTF8.GetBytes("yGAdlopoPVldABfn"));
+#pragma warning restore CA5351
 
     public static async Task<List<TuyaDiscoveredDevice>> ListenAsync(int seconds, ILogger logger)
     {
@@ -58,12 +60,12 @@ public static class TuyaDiscovery
         var tasks = new List<Task>();
         if (c6666 is not null)
         {
-            tasks.Add(ListenLoop(c6666, encrypted: false, results, cts.Token, logger));
+            tasks.Add(ListenLoop(c6666, encrypted: false, results, logger, cts.Token));
         }
 
         if (c6667 is not null)
         {
-            tasks.Add(ListenLoop(c6667, encrypted: true, results, cts.Token, logger));
+            tasks.Add(ListenLoop(c6667, encrypted: true, results, logger, cts.Token));
         }
 
         try
@@ -82,7 +84,7 @@ public static class TuyaDiscovery
         return [.. results.Values];
     }
 
-    private static async Task ListenLoop(UdpClient client, bool encrypted, Dictionary<string, TuyaDiscoveredDevice> results, CancellationToken token, ILogger logger)
+    private static async Task ListenLoop(UdpClient client, bool encrypted, Dictionary<string, TuyaDiscoveredDevice> results, ILogger logger, CancellationToken token)
     {
         while (!token.IsCancellationRequested)
         {

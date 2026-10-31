@@ -245,9 +245,10 @@ it after any change to capability shape, cancellation handling or the manifest, 
 check going from pass to fail as a blocking regression. Most checks `SKIP` until the plugin declares
 capabilities.
 
-The Macro Deck packages float to the newest published version, so the commands above need no version
-argument. Only to test against SDK surface that is not published yet, pack it into `local-feed/` and
-pass `-p:MacroDeckSdkVersion=<version>`.
+`Directory.Packages.props` pins every Macro Deck package to the verified SDK release, and the release
+workflow pins the CLI to the same version. The commands above need no version argument. To test an
+unreleased SDK, use a temporary package feed outside the repository and pass
+`-p:MacroDeckSdkVersion=<version>`; do not commit a local feed or alternate package source.
 
 Working in the template repository itself rather than in a plugin generated from it? Changing its shape
 (files, names, `.template.config/template.json`, `packaging/`) also needs a generated-project check -
@@ -266,6 +267,11 @@ macrodeck-plugin inspect --artifact <id>-<version>.macroDeckPlugin
 `pack` validates first and recomputes every `files[]` digest from disk, discarding whatever the source
 manifest declared - so never hand-maintain `files[]`. Signing happens *after* packing, against the packed
 manifest; sign earlier and the digest will not match.
+
+After dependency or asset changes, regenerate `THIRD-PARTY-NOTICES` with the Macro Deck Plugin
+Creator skill's `scripts/inventory-dependencies.py` against the plugin publish output, review its
+license information, mirror it to `src/TuyaControl/THIRD-PARTY-NOTICES` for packaging, and add any
+bundled asset provenance.
 
 ## Workflow
 

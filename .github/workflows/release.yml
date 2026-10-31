@@ -23,5 +23,5 @@ jobs:
     with:
       version: ${{ github.event.release.tag_name || inputs.version }}
       source: src/TuyaControl
-      cli-version: 3.0.0-beta.17
+      cli-version: 3.0.0
       changelog: ${{ github.event.release.body || inputs.changelog }}

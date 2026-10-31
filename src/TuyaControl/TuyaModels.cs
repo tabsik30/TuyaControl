@@ -55,11 +55,13 @@ public static class TuyaRegionExtensions
     };
 }
 
+#pragma warning disable CA1720 // These names are the persisted action choice values.
 public enum TuyaValueType
 {
     Bool,
     Integer,
     String,
 }
+#pragma warning restore CA1720
 
 public sealed class TuyaApiException(string message) : Exception(message);

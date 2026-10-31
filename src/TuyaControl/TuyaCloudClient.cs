@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using Serilog;
@@ -17,7 +18,7 @@ namespace TuyaControl.Services;
 /// TuyaLocalClient (cloud-fallback control) share one logged-in session for the
 /// lifetime of the plugin process.
 /// </summary>
-public sealed class TuyaCloudClient(ILogger logger)
+public sealed class TuyaCloudClient(ILogger logger) : IDisposable
 {
     private readonly ILogger _logger = logger.ForContext<TuyaCloudClient>();
     private readonly HttpClient _http = new() { Timeout = TimeSpan.FromSeconds(20) };
@@ -63,11 +64,13 @@ public sealed class TuyaCloudClient(ILogger logger)
         return Convert.ToHexStringLower(hash);
     }
 
+#pragma warning disable CA5351 // The Tuya cloud login API requires an MD5 password hash.
     private static string Md5Hex(string content)
     {
         var hash = MD5.HashData(Encoding.UTF8.GetBytes(content ?? ""));
         return Convert.ToHexStringLower(hash);
     }
+#pragma warning restore CA5351
 
     private static string HmacSha256Upper(string content, string secret)
     {
@@ -84,7 +87,7 @@ public sealed class TuyaCloudClient(ILogger logger)
             throw new TuyaApiException("No Access ID/Secret is set - enter them in the account config step.");
         }
 
-        var t = NowMillis().ToString();
+        var t = NowMillis().ToString(CultureInfo.InvariantCulture);
         var bodyForSign = jsonBody ?? "";
         var contentSha256 = Sha256Hex(bodyForSign);
         var stringToSign = $"{method.Method.ToUpperInvariant()}\n{contentSha256}\n\n{pathAndQuery}";
@@ -185,6 +188,8 @@ public sealed class TuyaCloudClient(ILogger logger)
 
         _logger.Information("Tuya: logged in successfully (uid: {Uid}).", _uid);
     }
+
+    public void Dispose() => _http.Dispose();
 
     private async Task EnsureLoggedInAsync()
     {

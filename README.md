@@ -1,5 +1,7 @@
 # Tuya Control - Macro Deck 3 Plugin
 
+<a href="https://macro-deck.app/store/com.tabsik12.tuya-control"><img alt="Open in the Macro Deck Store" src="https://assets.macro-deck.app/branding/Open%20in%20the%20Macro%20Deck%20Store%20Badge%20Dark.png" height="56"></a>
+
 A Macro Deck 3 out-of-process plugin for controlling Tuya smart home devices
 over your local network (LAN) with optional cloud fallback. Built on the
 Macro Deck 3 plugin SDK.
@@ -27,7 +29,7 @@ connection for devices that are not on your local network.
 
 ## Requirements
 
-- **Macro Deck 3** desktop app (version 3.0.0-beta.26 or later)
+- **Macro Deck 3** desktop app (version 3.0.0 or later)
 - Tuya smart home devices on your local network
 - (Optional) Tuya IoT Platform account for cloud features
 
@@ -38,6 +40,10 @@ The plugin uses Macro Deck's config flow. You will need to configure:
 ### 1. Tuya Cloud Account (Optional)
 
 Only needed if you want cloud fallback or cloud-only devices.
+
+If you used a plugin build that included bundled Tuya credentials, revoke and
+rotate that Client Secret in the Tuya IoT Platform before continuing. Removing
+the source file or rewriting Git history does not revoke an exposed credential.
 
 1. Go to [iot.tuya.com](https://iot.tuya.com) and create a Cloud project
 2. Navigate to **Cloud → Development → Your Project → Overview**

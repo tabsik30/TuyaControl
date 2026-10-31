@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
@@ -50,7 +51,7 @@ public sealed class TuyaLocalClient(TuyaCloudClient cloudClient, ILogger logger)
             ["gwId"] = device.Id,
             ["devId"] = device.Id,
             ["uid"] = device.Id,
-            ["t"] = UnixTime().ToString(),
+            ["t"] = UnixTime().ToString(CultureInfo.InvariantCulture),
         };
 
         var response = await SendAsync(device, 10, payload.ToString(Formatting.None), prependHeader: false, timeoutMs);
@@ -90,7 +91,7 @@ public sealed class TuyaLocalClient(TuyaCloudClient cloudClient, ILogger logger)
         {
             ["devId"] = device.Id,
             ["uid"] = string.Empty,
-            ["t"] = UnixTime().ToString(),
+            ["t"] = UnixTime().ToString(CultureInfo.InvariantCulture),
             ["dps"] = dps,
         };
 
@@ -101,8 +102,8 @@ public sealed class TuyaLocalClient(TuyaCloudClient cloudClient, ILogger logger)
         }
     }
 
-    private static bool IsV34(TuyaDeviceRecord device) => device.ProtocolVersion.Trim().StartsWith("3.4");
-    private static bool IsV35(TuyaDeviceRecord device) => device.ProtocolVersion.Trim().StartsWith("3.5");
+    private static bool IsV34(TuyaDeviceRecord device) => device.ProtocolVersion.Trim().StartsWith("3.4", StringComparison.Ordinal);
+    private static bool IsV35(TuyaDeviceRecord device) => device.ProtocolVersion.Trim().StartsWith("3.5", StringComparison.Ordinal);
     private static bool IsCloud(TuyaDeviceRecord device) => string.Equals(device.ProtocolVersion.Trim(), "cloud", StringComparison.OrdinalIgnoreCase);
 
     internal static string ToLocalDpCode(string code) => code.Trim() switch
@@ -577,7 +578,7 @@ public sealed class TuyaLocalClient(TuyaCloudClient cloudClient, ILogger logger)
 
     private static string StripVersionHeader(string s)
     {
-        if (s.Length >= 15 && (s.StartsWith("3.3") || s.StartsWith("3.1") || s.StartsWith("3.4")))
+        if (s.Length >= 15 && (s.StartsWith("3.3", StringComparison.Ordinal) || s.StartsWith("3.1", StringComparison.Ordinal) || s.StartsWith("3.4", StringComparison.Ordinal)))
         {
             return s[15..].TrimEnd('\0').TrimStart('\0');
         }
